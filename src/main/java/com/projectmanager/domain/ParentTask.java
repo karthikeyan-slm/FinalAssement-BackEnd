@@ -39,7 +39,19 @@ public class ParentTask {
 	public ParentTask() {
 	}
 
-
+	/**
+	 * Instantiates a new parent task.
+	 *
+	 * @param parentTaskId
+	 *            the parent task id
+	 * @param parentTask
+	 *            the parent task
+	 */
+	public ParentTask(@NotNull long parentTaskId, @NotNull String parentTask) {
+		super();
+		this.parentTaskId = parentTaskId;
+		this.parentTask = parentTask;
+	}
 	/**
 	 * Instantiates a new parent task.
 	 *
