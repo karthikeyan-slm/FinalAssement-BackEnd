@@ -1,6 +1,7 @@
 package com.projectmanager.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +51,7 @@ public class TaskControllerTest {
 	@Autowired
 	private TaskController taskcontroller;
 	
+	
 	/** The task string. */
 	@Value("${testcase.task}")
 	private String taskString;
@@ -58,7 +61,12 @@ public class TaskControllerTest {
 	
 	private TaskModel taskModel = null;
 	
+	
+	private TaskModel retTask =null;
+	
 	/** The task list. */
+	private List<TaskModel> taskModelList = new ArrayList();
+	
 	private List<Task> taskList = new ArrayList();
 	
 	
@@ -72,8 +80,8 @@ public class TaskControllerTest {
 	{
         task = new Task();
         task = createObject(taskString);
-        taskModel = createTaskModelObject(taskString);
-        taskList.add(task);
+        taskModel = new TaskModel();
+        taskModel = convertDomaintoUI(task, taskModel);
         taskList.add(task);
 	}
 	
@@ -84,27 +92,15 @@ public class TaskControllerTest {
 	 */
 	@Test
 	public void addTask() throws Exception {
-		String expectedJson = createJson(task);
+		String expectedJson = createJson(taskModel);
 		String restURI = "/pmapp/taskAction/addTask";
         String outJson = returnExpectedJson(expectedJson,restURI);
-        Task retTask = createObject(outJson);
+        Task retTaskObj = createObject(outJson);
+        retTask = new TaskModel();
+        retTask = convertDomaintoUI(retTaskObj, retTask);
         assertEquals(retTask.getPriority(), retTask.getPriority());
 	}
 	
-	/**
-	 * Gets the task.
-	 *
-	 * @return the task
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void getTask() throws Exception {
-		String expectedJson = createJson(task);
-		String restURI = "/pmapp/taskAction/getTaskById/" + Long.toString(task.getTaskId());
-        String outJson = returnExpectedJson(expectedJson,restURI);
-        Task retTask = createObject(outJson);
-        assertEquals(retTask.getPriority(), retTask.getPriority());
-	}
 	
 	/**
 	 * Delete task.
@@ -113,10 +109,12 @@ public class TaskControllerTest {
 	 */
 	@Test
 	public void deleteTask() throws Exception {
-		String expectedJson = createJson(task);
+		String expectedJson = createJson(taskModel);
 		String restURI = "/pmapp/taskAction/deleteTask";
         String outJson = returnExpectedJson(expectedJson,restURI);
-        Task retTask = createObject(outJson);
+        Task retTaskObj = createObject(outJson);
+        retTask = new TaskModel();
+        retTask = convertDomaintoUI(retTaskObj, retTask);
         assertEquals(retTask.getPriority(), retTask.getPriority());
 	}
 	
@@ -127,10 +125,12 @@ public class TaskControllerTest {
 	 */
 	@Test
 	public void updateTask() throws Exception {
-		String expectedJson = createJson(task);
+		String expectedJson = createJson(taskModel);
 		String restURI = "/pmapp/taskAction/updateTask";
         String outJson = returnExpectedJson(expectedJson,restURI);
-        Task retTask = createObject(outJson);
+        Task retTaskObj = createObject(outJson);
+        retTask = new TaskModel();
+        retTask = convertDomaintoUI(retTaskObj, retTask);
         assertEquals(retTask.getPriority(), retTask.getPriority());
 	}
 	
@@ -163,6 +163,7 @@ public class TaskControllerTest {
 		
 		Mockito.when(taskService.addTask(Mockito.any(TaskModel.class))).thenReturn(task);
 		Mockito.when(taskService.deleteTask((Mockito.any(TaskModel.class)))).thenReturn(task);
+
 		
 	        RequestBuilder reqBuilder = MockMvcRequestBuilders.post(restURI)
 	        		                                          .accept(MediaType.APPLICATION_JSON)
@@ -214,6 +215,37 @@ public class TaskControllerTest {
 		objMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		return objMapper.readValue(json,TaskModel.class);
 		
+	}
+	
+	private TaskModel convertDomaintoUI(Task taskObj, TaskModel taskModel) {
+		if(null != taskObj) {
+			
+			if(!StringUtils.isEmpty(taskObj.getTaskId()) && null != Long.valueOf(taskObj.getTaskId()) ) {
+				taskModel.setTaskId(String.valueOf(taskObj.getTaskId()));
+			}
+			taskModel.setTask(taskObj.getTask());
+			taskModel.setPriority(taskObj.getPriority());
+			taskModel.setStartDate(taskObj.getStartDate());
+			taskModel.setEndDate(taskObj.getEndDate());
+			taskModel.setStatus(taskObj.getStatus());
+			if(null != taskObj.getParentTask()) {
+				taskModel.setParentTaskId(String.valueOf(taskObj.getParentTask().getParentTaskId()));
+				taskModel.setParentTask(taskObj.getParentTask().getParentTask());
+				
+			}
+			if(null != taskObj.getProject()) {
+				taskModel.setProjectId(String.valueOf(taskObj.getProject().getProjectId()));
+				taskModel.setProject(taskObj.getProject().getProject());
+				
+			}
+			if(null != taskObj.getUser()) {
+				taskModel.setUserId(String.valueOf(taskObj.getUser().getUserId()));
+				taskModel.setUserName(taskObj.getUser().getFirstName());
+				
+			}
+		}
+		
+		return taskModel;
 	}
 	
 }
