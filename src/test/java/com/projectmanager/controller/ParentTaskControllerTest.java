@@ -86,7 +86,7 @@ public class ParentTaskControllerTest {
 	@Test
 	public void addParent() throws Exception {
 		String expectedJson = createJson(parentTask);
-		String restURI = "/pmapp/parentAction/addParent";
+		String restURI = "/pmapp/parentAction/addParentTask";
         String outJson = returnExpectedJson(expectedJson,restURI);
         ParentTask retParentTask = createObject(outJson);
         assertEquals(retParentTask.getParentTask(), parentTask.getParentTask());
