@@ -38,13 +38,13 @@ public class User implements Serializable {
 	@OneToMany
 	@JoinTable(name="TASK_ID",joinColumns=@JoinColumn(name="USER_ID"),
 	           inverseJoinColumns = @JoinColumn(name="TASK_ID"))
-	private List<Task> task = new ArrayList();
+	private List<Task> task;
 
 	/** The project. */
 	@OneToMany
 	@JoinTable(name="PROJECT_ID",joinColumns=@JoinColumn(name="USER_ID"),
 	           inverseJoinColumns = @JoinColumn(name="PROJECT_ID"))
-	private List<Project> project = new ArrayList();
+	private List<Project> project;
 
 	/**
 	 * Instantiates a new user.

@@ -3,7 +3,6 @@
  */
 package com.projectmanager.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -29,9 +28,9 @@ public class ParentTask {
 	private String parentTask;
 	
 	@OneToMany
-	@JoinTable(name="TASK_ID",joinColumns=@JoinColumn(name="PARENT_TASK_ID"),
+	@JoinTable(name="TASK_ID",joinColumns=@JoinColumn(name="parent_task_id"),
 	           inverseJoinColumns = @JoinColumn(name="TASK_ID"))
-	private List<Task> task = new ArrayList();
+	private List<Task> task;
 	
 	/**
 	 * Instantiates a new parent task.
