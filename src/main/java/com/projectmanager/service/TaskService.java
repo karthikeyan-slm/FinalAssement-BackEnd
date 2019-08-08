@@ -2,6 +2,7 @@ package com.projectmanager.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -136,6 +137,19 @@ public class TaskService {
 		}
 		
 		return taskModel;
+	}
+	
+	public Task endTask(Long Id) {
+		logger.info("Entered Method Name: findUserById ");
+		Optional<Task> taskIfExist = taskRepo.findById(Id);
+		if (taskIfExist != null) {
+			Task task =  (Task) taskIfExist.get();
+			task.setStatus("Completed");
+			taskRepo.save(task);
+			return task;
+		}
+		else
+			return null;
 	}
 
 }

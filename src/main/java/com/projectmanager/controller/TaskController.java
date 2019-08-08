@@ -5,14 +5,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projectmanager.domain.Task;
+import com.projectmanager.domain.User;
 import com.projectmanager.models.TaskModel;
 import com.projectmanager.service.TaskService;
 
@@ -73,5 +76,15 @@ private final Logger logger = LoggerFactory.getLogger(TaskController.class);
 		logger.info(" Task Details to be update:" + taskModel.toString());
 		Task task = taskService.addTask(taskModel);
 		return  task;
+	}
+	
+	
+	@RequestMapping("/endTask/{taskId}")
+	public Task endTask(@PathVariable(name="taskId") String taskId ) throws Exception
+	{
+		logger.info(" Entered endTask Method in TaskController");
+		logger.info("Task Id Searched for: " + taskId);
+		Task task = taskService.endTask(Long.parseLong(taskId));
+		return task;
 	}
 }
